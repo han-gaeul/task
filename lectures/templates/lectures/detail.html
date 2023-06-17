@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+  <div class='mx-5 my-5'>
+    <div class='d-flex justify-content-between'>
+      <div>
+        <div class='my-3'>
+          <h3>{{ lecture.title }}</h3>
+        </div>
+        <hr>
+        <div>
+          <p>{{ lecture.content }}</p>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-ligth dropdown-toggle border border-secondary rounded" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          강의 관리
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="lectureActionsDropdown">
+          <li>
+            <a class="dropdown-item" href="{% url 'chapters:create' lecture.pk %}">챕터 만들기</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'lectures:update' lecture.pk %}">강의 수정</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'lectures:delete' lecture.pk %}">강의 삭제</a>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'lectures:index' %}">글 목록</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border border-secondary rounded p-3">
+      <h5>챕터</h5>
+      <div>
+        {% for chapter in chapters %}
+          <div class="chapter">
+            <div class="d-flex justify-content-between align-items-center">
+              <h3 class="chapter-title">{{ chapter.title }}</h3>
+              <div class="dropdown">
+                <button class="btn btn-ligth dropdown-toggle border border-secondary rounded" type="button" id="chapterActionsDropdown{{ chapter.pk }}" data-bs-toggle="dropdown" aria-expanded="false">
+                  챕터 관리
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="chapterActionsDropdown{{ chapter.pk }}">
+                  <li>
+                    <a class="dropdown-item" href="{% url 'chapters:update' lecture.pk chapter.pk %}">수정하기</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="{% url 'chapters:delete' lecture.pk chapter.pk %}">삭제하기</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="chapter-content">
+              <div class="ratio ratio-16x9">
+                <video src="{{ chapter.videofile.url }}" controls="controls"></video>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const chapters = document.querySelectorAll('.chapter');
+
+      chapters.forEach(function (chapter) {
+        const title = chapter.querySelector('.chapter-title');
+        const content = chapter.querySelector('.chapter-content');
+        const dropdown = chapter.querySelector('.dropdown');
+
+        content.style.display = 'none';
+        dropdown.style.display = 'none';
+
+        title.addEventListener('click', function () {
+          if (content.style.display === 'none') {
+            content.style.display = 'block';
+            dropdown.style.display = 'block';
+          } else {
+            content.style.display = 'none';
+            dropdown.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+{% endblock content %}
